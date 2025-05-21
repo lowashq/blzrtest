@@ -1,0 +1,61 @@
+﻿@page "/"
+
+<h2 class="mb-4">Task Tracker</h2>
+
+<div class="task-input">
+    <input @bind="newTaskText" placeholder="Enter a new task" class="form-control" />
+    <button class="btn btn-primary mt-2" @onclick="AddTask" disabled="@string.IsNullOrWhiteSpace(newTaskText)">
+        Add Task
+    </button>
+</div>
+
+<ul class="list-group">
+    @foreach (var task in tasks)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <input type="checkbox" @bind="task.IsDone" class="form-check-input me-2" />
+                <span class="@GetTaskTextStyle(task)">@task.Text</span>
+            </div>
+            <button class="btn btn-outline-danger btn-sm" @onclick="() => RemoveTask(task)">Delete</button>
+        </li>
+    }
+</ul>
+
+<p class="task-stats">
+    Total tasks: @tasks.Count<br />
+    Completed: @tasks.Count(t => t.IsDone)
+</p>
+
+@code {
+    private string newTaskText;
+    private List<TaskItem> tasks = new();
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTaskText))
+        {
+            tasks.Add(new TaskItem { Text = newTaskText });
+            newTaskText = string.Empty;
+        }
+    }
+
+    private void RemoveTask(TaskItem task)
+    {
+        tasks.Remove(task);
+    }
+
+    private string GetTaskTextStyle(TaskItem task) =>
+        task.IsDone ? "task-done" : "";
+
+    private class TaskItem
+    {
+        public string Text { get; set; }
+        public bool IsDone { get; set; }
+    }
+}
+
+
+@code {
+
+}
